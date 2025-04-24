@@ -1,12 +1,15 @@
 use std::{env::{args, current_dir}, fs};
 
-const DEFAULT: &str = 
-"{
-    \"&schema\": \"https
-    \"tasks\": {
-        \"test\": \"echo 'Hello World'\",
-    }
-}";
+use serde_json::{json, Value};
+
+fn default_json() -> Value {
+    json!({
+        "$schema": "https://raw.githubusercontent.com/Bewis09/Fold/refs/heads/master/fold.schema.json",
+        "tasks": {
+            "test": "echo 'Hello World'",
+        }
+    })
+}
 
 fn main() {
     let result = run();
@@ -26,7 +29,7 @@ fn run() -> Result<(), String> {
             run_task(args[2..].to_vec())?;
         }
         "init" => {
-            run_init(args[2..].to_vec())?;
+            run_init()?;
         }
         _ => return Err("Invalid arguments".to_string()),
     }
@@ -39,10 +42,10 @@ fn run_task(task: Vec<String>) -> Result<(), String> {
     Ok(())
 }
 
-fn run_init(task: Vec<String>) -> Result<(), String> {
+fn run_init() -> Result<(), String> {
     fs::write(current_dir().and_then(|p| {
         Ok(p.join("fold.json"))
-    }).map_err(|x| x.to_string())?, "{\n    \"tasks\": {\n\n    }\n}").map_err(|x| x.to_string())?;
+    }).map_err(|x| x.to_string())?, serde_json::to_string_pretty(&default_json()).unwrap()).map_err(|x| x.to_string())?;
 
     Ok(())
 }

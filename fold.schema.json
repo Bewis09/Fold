@@ -1,0 +1,55 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "tasks": {
+            "type": "object",
+            "description": "The list of tasks that can be executed"
+        },
+        "config": {
+            "type": "object",
+            "description": "The configuration for the fold task runner",
+            "additionalProperties": false,
+            "properties": {
+                "configFiles": {
+                    "type": "array",
+                    "description": "The list of other config files to use",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "path": {
+                                "type": "string",
+                                "description": "The path to the config file"
+                            },
+                            "json_path": {
+                                "type": "array",
+                                "description": "The path to the list in the config file",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "enabledFiles": {
+                    "type": "array",
+                    "description": "The list of files to include in the fold task runner",
+                    "items": {
+                        "enum": [
+                            "deno",
+                            "package"
+                        ]
+                    }
+                }
+            }
+        },
+        "$schema": {
+            "type": "string",
+            "description": "The schema version of the fold file"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "tasks"
+    ]
+}
