@@ -11,6 +11,15 @@ fn default_json() -> Value {
         "$schema": "https://raw.githubusercontent.com/Bewis09/Fold/refs/heads/master/fold.schema.json",
         "tasks": {
             "test": "echo 'Hello World'",
+        },
+        "config": {
+            "silent": false,
+            "configFiles": [
+
+            ],
+            "enabledFiles": [
+
+            ]
         }
     })
 }
@@ -72,7 +81,7 @@ fn run() -> Result<(), String> {
             run_task(args[2..].to_vec())?;
         }
         "init" => {
-            run_init()?;
+            run_init(args[2..].to_vec())?;
         }
         "help" => {
             run_help()?;
@@ -139,7 +148,8 @@ fn run_task(task: Vec<String>) -> Result<(), String> {
             let mut enabled_files = config
                 .get("enabledFiles")
                 .and_then(|x| x.as_array())
-                .unwrap_or(temp).clone();
+                .unwrap_or(temp)
+                .clone();
 
             enabled_files.push(json!("fold"));
 
@@ -167,10 +177,7 @@ fn run_task(task: Vec<String>) -> Result<(), String> {
                 .as_array()
                 .ok_or("Invalid JSON format")?;
 
-            let prefix = file
-                .get("prefix")
-                .and_then(|x| x.as_str())
-                .unwrap_or(path);
+            let prefix = file.get("prefix").and_then(|x| x.as_str()).unwrap_or(path);
 
             if task_name.len() > 1 {
                 if task_name[0] != prefix {
@@ -210,7 +217,7 @@ fn run_task(task: Vec<String>) -> Result<(), String> {
 
     let output = std::process::Command::new("cmd")
         .arg("/c")
-        .arg(task_command)
+        .arg(task_command+" "+&task[1..].join(" "))
         .stdout(std::process::Stdio::inherit())
         .stderr(std::process::Stdio::inherit())
         .stdin(std::process::Stdio::inherit())
@@ -237,11 +244,17 @@ fn run_task(task: Vec<String>) -> Result<(), String> {
     Ok(())
 }
 
-fn run_init() -> Result<(), String> {
-    fs::write(
-        current_dir()
+fn run_init(args: Vec<String>) -> Result<(), String> {
+    let path = current_dir()
             .and_then(|p| Ok(p.join("fold.json")))
-            .map_err(|x| x.to_string())?,
+            .map_err(|x| x.to_string())?;
+
+    if !args.contains(&"--force".to_owned()) && !args.contains(&"-f".to_owned()) && fs::exists(path.clone()).unwrap_or(false) {
+        return Err("fold.json already exists. Use --force to overwrite it".to_string());
+    }
+
+    fs::write(
+        path,
         serde_json::to_string_pretty(&default_json()).unwrap(),
     )
     .map_err(|x| x.to_string())?;
@@ -255,12 +268,12 @@ fn run_init() -> Result<(), String> {
 fn run_help() -> Result<(), String> {
     let help = format!(
         r#"
-    Usage: {} [command] [args]
+    Usage: {} [command]
 
     Commands:
-        run [task]   Run a task
-        init         Initialize a new fold.json file
-        help         Show this help message
+        run <task> [args]  Run a task
+        init [--force]     Initialize a new fold.json file
+        help               Show this help message
     "#,
         args().collect::<Vec<String>>()[0]
     );
