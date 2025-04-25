@@ -1,0 +1,22 @@
+{
+  "$schema": "../fold.schema.json",
+  "tasks": {
+    "test": "echo hello from fold"
+  },
+  "config": {
+    "silent": false,
+    "configFiles": [
+      {
+        "path": "example.json",
+        "json_path": [
+          "this", "is", "an", "example", "path"
+        ],
+        "prefix": "example"
+      }
+    ],
+    "enabledFiles": [
+      "deno",
+      "node"
+    ]
+  }
+}

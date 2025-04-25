@@ -27,6 +27,10 @@
                                 "items": {
                                     "type": "string"
                                 }
+                            },
+                            "prefix": {
+                                "type": "string",
+                                "description": "The prefix to use for the tasks in the config file"
                             }
                         }
                     }
@@ -37,9 +41,14 @@
                     "items": {
                         "enum": [
                             "deno",
-                            "package"
+                            "node"
                         ]
                     }
+                },
+                "silent": {
+                    "type": "boolean",
+                    "description": "If true, the fold task runner will not print its own output, but output from the running program and errors will still be shown",
+                    "default": false
                 }
             }
         },

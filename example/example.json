@@ -1,0 +1,13 @@
+{
+    "this": {
+        "is": {
+            "an": {
+                "example": {
+                    "path": {
+                        "test": "echo hello from the example path"
+                    }
+                }
+            }
+        }
+    }
+}
