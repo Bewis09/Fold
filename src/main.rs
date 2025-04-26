@@ -8,7 +8,7 @@ use serde_json::{json, Value};
 
 fn default_json() -> Value {
     json!({
-        "$schema": "https://raw.githubusercontent.com/Bewis09/Fold/refs/heads/master/fold.schema.json",
+        "$schema": "https://raw.githubusercontent.com/Bewis09/Fold/refs/heads/main/fold.schema.json",
         "tasks": {
             "test": "echo 'Hello World'",
         },
